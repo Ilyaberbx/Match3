@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using AppsFlyerSDK;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -17,10 +15,7 @@ namespace UI.Menu
         private void OnDestroy() 
             => _button.onClick.RemoveListener(Execute);
 
-        private void Execute()
-        {
-            AppsFlyer.sendEvent("play",new Dictionary<string, string>());
-            SceneManager.LoadSceneAsync(_sceneKey);
-        }
+        private void Execute() 
+            => SceneManager.LoadSceneAsync(_sceneKey);
     }
 }

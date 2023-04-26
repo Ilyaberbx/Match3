@@ -1,36 +1,23 @@
-using System.Collections.Generic;
-using AppsFlyerSDK;
+﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class AppsflyerCacher : MonoBehaviour, IAppsFlyerConversionData
+public class AppsFlyerCacher : MonoBehaviour
 {
-    private const string DevKey = "p6kCY8PcXysqHoQVFRmowj";
-    
-    public Dictionary<string, object> ConversionDataDictionary => _conversionDataDictionary;
-    
-    private Dictionary<string, object> _conversionDataDictionary;
-    private void Start() 
-        => Initialize();
+    [SerializeField] private AppsFlyerObjectScript _appsFlyer;
+    [SerializeField] private TextMeshProUGUI _text;
 
-    private void Initialize()
+    private void Awake()
+        => _appsFlyer.OnDataSuccess += CacheData;
+
+    private void OnDestroy()
+        => _appsFlyer.OnDataSuccess -= CacheData;
+
+    private void CacheData(Dictionary<string, object> conversionDictionary)
     {
-        AppsFlyer.setIsDebug(true);
-        AppsFlyer.initSDK(DevKey, string.Empty, this);
-        AppsFlyer.startSDK();
+        _text.text = "";
+
+        foreach (var key in conversionDictionary.Keys)
+            _text.text += key + ":  " + conversionDictionary[key] + ";      ";
     }
-
-    public void onConversionDataSuccess(string conversionData)
-    {
-        AppsFlyer.AFLog("onConversionDataSuccess", conversionData);
-        _conversionDataDictionary = AppsFlyer.CallbackStringToDictionary(conversionData);
-    }
-
-    public void onConversionDataFail(string error) 
-        => AppsFlyer.AFLog("onConversionDataFail", error);
-
-    public void onAppOpenAttribution(string attributionData) {}
-    
-
-    public void onAppOpenAttributionFailure(string error) 
-        => AppsFlyer.AFLog("onAppOpenAttributionFailure", error);
 }

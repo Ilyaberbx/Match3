@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using AppsFlyerSDK;
@@ -16,6 +16,9 @@ public class AppsFlyerObjectScript : MonoBehaviour , IAppsFlyerConversionData
     public string macOSAppID;
     public bool isDebug;
     public bool getConversionData;
+    public event Action<Dictionary<string, object>> OnDataSuccess;
+
+
     //******************************//
 
 
@@ -35,19 +38,15 @@ public class AppsFlyerObjectScript : MonoBehaviour , IAppsFlyerConversionData
  
         AppsFlyer.startSDK();
     }
-
-
-    void Update()
-    {
-
-    }
-
+    
     // Mark AppsFlyer CallBacks
+
     public void onConversionDataSuccess(string conversionData)
     {
         AppsFlyer.AFLog("didReceiveConversionData", conversionData);
         Dictionary<string, object> conversionDataDictionary = AppsFlyer.CallbackStringToDictionary(conversionData);
         // add deferred deeplink logic here
+        OnDataSuccess?.Invoke(conversionDataDictionary);
     }
 
     public void onConversionDataFail(string error)
@@ -66,5 +65,4 @@ public class AppsFlyerObjectScript : MonoBehaviour , IAppsFlyerConversionData
     {
         AppsFlyer.AFLog("onAppOpenAttributionFailure", error);
     }
-
 }
